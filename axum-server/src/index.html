@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+  <style>
+    /* .scroller { */
+    /* } */
+    * {
+      outline: solid 1px red;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: clip;
+      background-color: rgb(183, 0, 255);
+    }
+  </style>
+
+  <script type="text/javascript">
+    function WebSocketTest() {
+      // Let us open a web socket
+      var ws = new WebSocket("ws://localhost:9001");
+
+      //  ws.onopen = function() {
+      //     // Web Socket is connected, send data using send()
+      //     ws.send("Message to send");
+      //     alert("Message is sent...");
+      //  };
+
+      ws.onmessage = function (evt) {
+        var received_msg = evt.data;
+        // const node = document.createTextNode(received_msg);
+        document.getElementById("test").prepend(received_msg);
+      };
+
+      //  ws.onclose = function() { 
+      //     // websocket is closed.
+      //     alert("Connection is closed..."); 
+      //  };
+    }
+
+    window.onload = WebSocketTest();
+  </script>
+
+  <div id="sse">
+    <!-- <a href="javascript:WebSocketTest()">Run WebSocket asdf</a> -->
+    <p> Emotes Right Now</p>
+  </div>
+</head>
+
+<body>
+  <div class="scroller" id="test">
+  </div>
+</body>
+
+</html>
