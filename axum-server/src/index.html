@@ -5,7 +5,7 @@
 <head>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100;500&display=swap');
-    </style> 
+  </style>
   <style>
     * {
       /* outline: solid 1px red; */
@@ -15,13 +15,22 @@
       background-color: rgb(145, 70, 255);
     }
 
-    .row {
+    .head-row {
       display: flex;
       flex-flow: row nowrap;
+      align-items: center;
+    }
+
+    .row {
+      display: none;
     }
 
     img {
       flex: 0 0 auto;
+    }
+
+    button {
+      background-size: 100%;
     }
 
     #title {
@@ -31,10 +40,6 @@
       font-size: 50px;
     }
   </style>
-  
-  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100;500&display=swap" rel="stylesheet"> -->
 
   <script type="text/javascript">
     function WebSocketClient() {
@@ -54,30 +59,61 @@
 
         var node = document.createElement("img");
         node.setAttribute("src", m.get(emote));
+        node.setAttribute("id", "emote");
         document.getElementById(id).prepend(node);
 
       };
     }
 
+    function ToggleOpaque(element) {
+      if (element.style.opacity == .2) {
+        element.style.opacity = 1;
+      } else {
+        element.style.opacity = .2;
+      }
+    }
+
+    // element is the input(button) element
+    function ToggleRowById(element) {
+      var rowId = element.id.replace("button-", "row-");
+      var x = document.getElementById(rowId);
+      if (x.style.display == "flex") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "flex";
+        x.style.flexFlow = "row nowrap";
+        x.style.alignItems = "center";
+      }
+    }
+
     window.onload = WebSocketClient();
   </script>
 
-  <div id="sse">
+  <div class="head-row">
     <p id="title"> Twitch Right Now</p>
+    <input type="image" id="button-asmongold"
+      src="https://static-cdn.jtvnw.net/jtv_user_pictures/asmongold-profile_image-f7ddcbd0332f5d28-70x70.png"
+      onclick="ToggleOpaque(this); ToggleRowById(this);" />
+    <input type="image" id="button-payo"
+      src="https://static-cdn.jtvnw.net/jtv_user_pictures/996d2d80-c1c4-4dd7-99dd-074c47cf7196-profile_image-70x70.png"
+      onclick="ToggleOpaque(this); ToggleRowById(this);" />
+    <input type="image" id="button-staysafetv" 
+      src="https://static-cdn.jtvnw.net/jtv_user_pictures/9422718a-57f7-4b1f-8e8f-54906b407847-profile_image-70x70.png"
+      onclick="ToggleOpaque(this); ToggleRowById(this);" />
   </div>
 </head>
 
 <body>
-  <div class="row">
+  <div class="row" id="row-asmongold">
     <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/asmongold-profile_image-f7ddcbd0332f5d28-70x70.png">
     <div class="scroller" id="asmongold"> </div>
   </div>
-  <div class="row">
+  <div class="row" id="row-payo">
     <img
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/996d2d80-c1c4-4dd7-99dd-074c47cf7196-profile_image-70x70.png">
     <div class="scroller" id="payo"> </div>
   </div>
-  <div class="row">
+  <div class="row" id="row-staysafetv">
     <img
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/9422718a-57f7-4b1f-8e8f-54906b407847-profile_image-70x70.png">
     <div class="scroller" id="staysafetv"> </div>
