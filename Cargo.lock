@@ -82,20 +82,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "axum-server"
-version = "0.1.0"
-dependencies = [
- "axum",
- "futures",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "twitch-irc",
-]
-
-[[package]]
 name = "base64"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1403,6 +1389,20 @@ dependencies = [
  "tokio-stream",
  "tokio-util",
  "tracing",
+]
+
+[[package]]
+name = "twitch-right-now"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "futures",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "twitch-irc",
 ]
 
 [[package]]

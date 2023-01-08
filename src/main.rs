@@ -1,5 +1,5 @@
 use axum::{
-    extract::ws::{Message, WebSocket, WebSocketUpgrade},
+    extract::{ConnectInfo, ws::{Message, WebSocket, WebSocketUpgrade}},
     response::{Html, IntoResponse},
     routing::get,
     Router,
@@ -26,7 +26,7 @@ async fn main() {
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::info!("listening on {}", addr);
     axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .unwrap();
 }
@@ -44,7 +44,7 @@ async fn websocket(stream: WebSocket) {
     let (mut incoming_messages, client) =
         TwitchIRCClient::<SecureTCPTransport, StaticLoginCredentials>::new(config);
 
-    // This task will receive twitch chat messages and forward emotes to the client.
+    // This task will receive twitch chat messages and forward any emotes in the emote_set to the client.
     let mut send_task = tokio::spawn(async move {
         let emotes = include_str!("emotes.txt");
         let mut emote_set = std::collections::HashSet::new();
@@ -71,7 +71,7 @@ async fn websocket(stream: WebSocket) {
         }
     });
 
-    // This task will receive twitch channel names from the client and then join them
+    // This task will receive twitch channel names from the client and then join/part them
     let mut recv_task = tokio::spawn(async move {
         let mut chats = std::collections::HashSet::new();
         while let Some(Ok(Message::Text(channel_name))) = receiver.next().await {
@@ -95,6 +95,7 @@ async fn websocket(stream: WebSocket) {
     };
 }
 
-async fn index() -> Html<&'static str> {
+async fn index(ConnectInfo(addr): ConnectInfo<SocketAddr>) -> Html<&'static str> {
+    tracing::info!("connection from {addr}");
     Html(include_str!("index.html"))
 }
