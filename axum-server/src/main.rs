@@ -20,8 +20,8 @@ async fn main() {
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
     let app = Router::new()
-        .route("/websocket", get(websocket_handler))
-        .route("/", get(index));
+        .route("/", get(index))
+        .route("/ws", get(websocket_handler));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::info!("listening on {}", addr);
@@ -32,18 +32,12 @@ async fn main() {
 }
 
 async fn websocket_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
-    ws.on_upgrade(|socket| websocket(socket));
+    ws.on_upgrade(|socket| websocket(socket))
 }
 
 async fn websocket(stream: WebSocket) {
     // By splitting we can send and receive at the same time.
     let (mut sender, _receiver) = stream.split();
-
-    let emotes = include_str!("emotes.txt");
-    let mut emote_set = std::collections::HashSet::new();
-    for emote in emotes.lines() {
-        emote_set.insert(emote.to_owned());
-    }
 
     // default configuration joins chat as anonymous.
     let config = ClientConfig::default();
@@ -52,6 +46,12 @@ async fn websocket(stream: WebSocket) {
 
     // This task will receive twitch chat messages and forward emotes to the client.
     let mut send_task = tokio::spawn(async move {
+        let emotes = include_str!("emotes.txt");
+        let mut emote_set = std::collections::HashSet::new();
+        for emote in emotes.lines() {
+            emote_set.insert(emote.to_owned());
+        }
+
         while let Some(message) = incoming_messages.recv().await {
             match message {
                 ServerMessage::Privmsg(message) => {
@@ -59,7 +59,7 @@ async fn websocket(stream: WebSocket) {
                     for token in message.message_text.split(" ") {
                         if emote_set.contains(token) {
                             let msg = format!("{}:{}", message.channel_login, token);
-                            tracing::info!("{}",msg);
+                            tracing::info!("{}", msg);
                             match sender.send(Message::Text(msg)).await {
                                 Ok(_) => tracing::info!("sent"),
                                 Err(e) => tracing::info!("failed to send {e}"),

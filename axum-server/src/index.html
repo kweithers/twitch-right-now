@@ -40,29 +40,17 @@
     }
   </style>
 
-  <script type="text/javascript">
-    
-    const serverURL = "ws://localhost:3000/websocket";
-    function openSocket(url) {
-      // open the socket:
-      socket = new WebSocket(url);
-      // socket.addEventListener('open', openConnection);
-      // socket.addEventListener('close', closeConnection);
-      // socket.addEventListener('message', readIncomingMessage);
-      WebSocketClient(socket);
-    }
-
-    function WebSocketClient(ws) {
-      // const ws = new WebSocket("ws://localhost:3000/websocket");
-      // const ws = new WebSocket("ws://localhost:9005");
+  <script>
+    function WebSocketClient() {
+      const ws = new WebSocket('ws://localhost:3000/ws');
 
       let m = new Map();
       m.set("KEKW", "https://cdn.betterttv.net/emote/5e9c6c187e090362f8b0b9e8/2x");
       m.set("LULW", "https://cdn.betterttv.net/emote/5dc79d1b27360247dd6516ec/2x");
       m.set("OMEGALUL", "https://cdn.betterttv.net/emote/583089f4737a8e61abb0186b/2x");
 
-      ws.onmessage = (evt) => {
-        var received_msg = evt.data;
+      ws.onmessage = function (evt) {
+        var received_msg = evt.data; 
         const arr = received_msg.split(":");
         const id = arr[0];
         const emote = arr[1];
@@ -95,17 +83,10 @@
       }
     }
 
-    // Sends a message over the websocket to the server to join this chat.
-    // function JoinChat(element) {
-    //   var chat = element.id.replace("button-", "");
-    //   ws.send(chat);
-    // }
-
-    window.addEventListener('load', openSocket(serverURL));  
-    </script>
+    window.addEventListener('load', WebSocketClient);  
+  </script>
 
   <div class="head-row">
-    <!-- <button id="join-chat" type="button" onclick="JoinChat('staysafetv');">Join Chat</button> -->
     <p id="title"> Twitch Right Now</p>
     <input type="image" id="button-asmongold"
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/asmongold-profile_image-f7ddcbd0332f5d28-70x70.png"
