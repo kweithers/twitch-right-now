@@ -37,7 +37,7 @@ async fn websocket_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
 
 async fn websocket(stream: WebSocket) {
     // By splitting we can send and receive at the same time.
-    let (mut sender, _receiver) = stream.split();
+    let (mut sender, mut receiver) = stream.split();
 
     // default configuration joins chat as anonymous.
     let config = ClientConfig::default();
@@ -55,7 +55,7 @@ async fn websocket(stream: WebSocket) {
         while let Some(message) = incoming_messages.recv().await {
             match message {
                 ServerMessage::Privmsg(message) => {
-                    // tracing::info!("{}", message.message_text);
+                    tracing::info!("{}", message.message_text);
                     for token in message.message_text.split(" ") {
                         if emote_set.contains(token) {
                             let msg = format!("{}:{}", message.channel_login, token);
@@ -73,33 +73,33 @@ async fn websocket(stream: WebSocket) {
     });
 
     // This task will receive twitch channel names from the client and then join them
-    // let mut recv_task = tokio::spawn(async move {
-    //     // while let Some(Ok(Message::Text(channel_name))) = receiver. .next().await {
-    //     //     tracing::info!("Joining {}'s twitch chat", channel_name);
-    //     //     client.join(channel_name.to_owned()).unwrap();
-    //     // }
-    //     loop {
-    //         match receiver.next().await {
-    //             Some(message) => {
-    //                 match message {
-    //                     Ok(m) => tracing::info!("{:#?}", m),
-    //                     Err(e) => tracing::info!("{:#?}", e),
-    //                 }
-    //             }
-    //             None => (),
-    //         }
-    //     }
-    // });
-    client.join("asmongold".to_owned()).unwrap();
-    client.join("payo".to_owned()).unwrap();
-    client.join("staysafetv".to_owned()).unwrap();
+    let mut recv_task = tokio::spawn(async move {
+        while let Some(Ok(Message::Text(channel_name))) = receiver.next().await {
+            tracing::info!("Joining {}'s twitch chat", channel_name);
+            client.join(channel_name.to_owned()).unwrap();
+        }
+        // loop {
+        //     match receiver.next().await {
+        //         Some(message) => {
+        //             match message {
+        //                 Ok(m) => tracing::info!("{:#?}", m),
+        //                 Err(e) => tracing::info!("{:#?}", e),
+        //             }
+        //         }
+        //         None => (),
+        //     }
+        // }
+    });
+    // client.join("asmongold".to_owned()).unwrap();
+    // client.join("payo".to_owned()).unwrap();
+    // client.join("staysafetv".to_owned()).unwrap();
     // // If any one of the tasks exit, abort the other.
-    // tokio::select! {
-    //     _ = (&mut send_task) => {recv_task.abort(); tracing::info!("sender closed; aborting");},
-    //     _ = (&mut recv_task) => {send_task.abort(); tracing::info!("recv closed; aborting");},
-    // };
+    tokio::select! {
+        _ = (&mut send_task) => {recv_task.abort(); tracing::info!("sender closed; aborting");},
+        _ = (&mut recv_task) => {send_task.abort(); tracing::info!("recv closed; aborting");},
+    };
 
-    send_task.await.unwrap();
+    // send_task.await.unwrap();
     // recv_task.await.unwrap();
 }
 

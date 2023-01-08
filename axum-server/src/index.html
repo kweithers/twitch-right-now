@@ -41,8 +41,9 @@
   </style>
 
   <script>
+    const ws = new WebSocket('ws://localhost:3000/ws');
+
     function WebSocketClient() {
-      const ws = new WebSocket('ws://localhost:3000/ws');
 
       let m = new Map();
       m.set("KEKW", "https://cdn.betterttv.net/emote/5e9c6c187e090362f8b0b9e8/2x");
@@ -83,6 +84,9 @@
       }
     }
 
+    function JoinChat(chat) {
+      ws.send(chat);
+    }
     window.addEventListener('load', WebSocketClient);  
   </script>
 
@@ -90,13 +94,13 @@
     <p id="title"> Twitch Right Now</p>
     <input type="image" id="button-asmongold"
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/asmongold-profile_image-f7ddcbd0332f5d28-70x70.png"
-      onclick="ToggleOpaque(this); ToggleRowById(this);" />
+      onclick="ToggleOpaque(this); ToggleRowById(this); JoinChat('asmongold');" />
     <input type="image" id="button-payo"
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/996d2d80-c1c4-4dd7-99dd-074c47cf7196-profile_image-70x70.png"
-      onclick="ToggleOpaque(this); ToggleRowById(this);" />
+      onclick="ToggleOpaque(this); ToggleRowById(this); JoinChat('payo');;" />
     <input type="image" id="button-staysafetv"
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/9422718a-57f7-4b1f-8e8f-54906b407847-profile_image-70x70.png"
-      onclick="ToggleOpaque(this); ToggleRowById(this);" />
+      onclick="ToggleOpaque(this); ToggleRowById(this); JoinChat('staysafetv');" />
   </div>
 </head>
 
