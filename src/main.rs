@@ -1,5 +1,8 @@
 use axum::{
-    extract::{ConnectInfo, ws::{Message, WebSocket, WebSocketUpgrade}},
+    extract::{
+        ws::{Message, WebSocket, WebSocketUpgrade},
+        ConnectInfo,
+    },
     response::{Html, IntoResponse},
     routing::get,
     Router,
@@ -59,11 +62,11 @@ async fn websocket(stream: WebSocket) {
                     for token in message.message_text.split(" ") {
                         if emote_set.contains(token) {
                             let msg = format!("{}:{}", message.channel_login, token);
-                            tracing::info!("{}", msg);
                             match sender.send(Message::Text(msg)).await {
-                                Ok(_) => tracing::info!("sent"),
+                                Ok(_) => (),
                                 Err(e) => tracing::info!("failed to send {e}"),
                             }
+                            break; //only send first emote in the message to reduce spam
                         }
                     }
                 }
@@ -86,7 +89,6 @@ async fn websocket(stream: WebSocket) {
                 chats.remove(&channel_name);
             }
         }
-
     });
 
     // If any one of the tasks exit, abort the other.

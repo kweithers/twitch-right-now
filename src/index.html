@@ -5,8 +5,7 @@
 <head>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100;500&display=swap');
-  </style>
-  <style>
+
     * {
       overflow: hidden;
       white-space: nowrap;
@@ -19,6 +18,24 @@
       flex-flow: row nowrap;
       align-items: center;
     }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    footer {
+      margin-top: auto;
+      color: rgb(255, 255, 255);
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: bold;
+      font-size: 12px;
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+    }
+
 
     .row {
       display: none;
@@ -455,7 +472,7 @@
 
         var node = document.createElement("img");
         node.setAttribute("src", m.get(emote));
-        node.setAttribute("id", "emote");
+        node.setAttribute("id", received_msg);
         document.getElementById(id).prepend(node);
       };
     }
@@ -487,7 +504,7 @@
   </script>
 
   <div class="head-row">
-    <p id="title"> Twitch Right Now</p>
+    <p id="title"> Emotes Right Now</p>
     <input type="image" id="button-xqc"
       src="https://static-cdn.jtvnw.net/jtv_user_pictures/xqc-profile_image-9298dca608632101-70x70.jpeg"
       onclick="ToggleOpaque(this); ToggleRowById(this);" />
@@ -524,4 +541,9 @@
   </div>
 </body>
 
+<footer>
+  <a href="https://www.rust-lang.org/"> <img src="https://rustacean.net/assets/rustacean-orig-noshadow.svg" height="34"
+      width="53"></a>
+  <p>Built with <a href="https://github.com/tokio-rs/axum">Axum</a></p>
+</footer>
 </html>
