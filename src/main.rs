@@ -46,10 +46,11 @@ async fn websocket(stream: WebSocket) {
 
     // This task will receive twitch chat messages and forward any emotes in the emote_set to the client.
     let mut send_task = tokio::spawn(async move {
-        let emotes = include_str!("emotes.txt");
+        let emotes = include_str!("emote-urls.txt");
         let mut emote_set = std::collections::HashSet::new();
         for emote in emotes.lines() {
-            emote_set.insert(emote.to_owned());
+            let emote_name = emote.split(":").next().unwrap();
+            emote_set.insert(emote_name.to_owned());
         }
 
         while let Some(message) = incoming_messages.recv().await {
