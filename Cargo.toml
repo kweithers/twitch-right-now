@@ -2,11 +2,15 @@
 name = "twitch-right-now"
 version = "0.1.0"
 edition = "2021"
+default-run = "twitch-right-now"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "get-emote-urls"
+path = "src/get-emote-urls.rs"
 
 [dependencies]
 axum = { version = "0.6.1", features = ["ws"] }
+fantoccini = "0.19.3"
 futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.68"
