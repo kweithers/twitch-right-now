@@ -8,6 +8,10 @@ default-run = "twitch-right-now"
 name = "get-emote-urls"
 path = "src/get-emote-urls.rs"
 
+[[bin]]
+name = "get-7tv-urls"
+path = "src/get-7tv-urls.rs"
+
 [dependencies]
 axum = { version = "0.6.1", features = ["ws"] }
 fantoccini = "0.19.3"
